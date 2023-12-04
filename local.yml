@@ -4,7 +4,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./docker/local/django/Dockerfile
+      dockerfile: docker/local/django/Dockerfile
     volumes:
       - .:/app:z
       - static_volume:/app/staticfiles
@@ -24,7 +24,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./docker/local/postgres/Dockerfile
+      dockerfile: docker/local/postgres/Dockerfile
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
       - local_postgres_data_backups:/backups
