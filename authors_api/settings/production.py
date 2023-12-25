@@ -5,4 +5,4 @@ ADMINS = [("Realbuber", "api.ms0345313@gmail.com")]
 
 # TODO add domain names of the prodcution server
 
-CSRD_TRUSTED_ORIGINS = ["http://localhost:8080"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]

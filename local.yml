@@ -17,6 +17,7 @@ services:
     depends_on:
       - postgres
       - mailhog
+      - redis
     command: /start
     networks:
       - Realbuber_api
@@ -32,15 +33,56 @@ services:
       - ./.envs/.local/.postgres
     networks:
       - Realbuber_api
-  
+
   mailhog:
+    platform: linux/amd64
     image: mailhog/mailhog:v1.0.0
     container_name: mailhog
     ports:
       - "8025:8025"
     networks:
       - Realbuber_api
-    
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - Realbuber_api
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: docker/local/django/Dockerfile
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    depends_on:
+      - redis
+      - postgres
+      - mailhog
+    networks:
+      - Realbuber_api
+
+  flower:
+    build:
+      context: .
+      dockerfile: docker/local/django/Dockerfile
+    command: /start-flower
+    volumes:
+      - flower_data:/data
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - Realbuber_api
+
   nginx:
     restart: always
     depends_on:
@@ -64,3 +106,4 @@ volumes:
   media_volume:
   local_postgres_data: {}
   local_postgres_data_backups: {}
+  flower_data: {}
